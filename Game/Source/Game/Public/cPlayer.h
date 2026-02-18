@@ -19,6 +19,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Custom variables
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	class UCameraComponent* defCamera;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
