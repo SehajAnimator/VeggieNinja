@@ -19,7 +19,7 @@ AcPlayer::AcPlayer()
 	defCamera->SetupAttachment(RootComponent);
 	defCamera->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
-	GAreScreenMessagesEnabled = true;	
+	GAreScreenMessagesEnabled = true;
 }
 
 // Called when the game starts or when spawned
