@@ -8,15 +8,15 @@ BOSSES:
 WEAPONS:
 
 - Kukri Knife [✅]
-- Tweezers
+- Tweezers[✅]
 - Spoon [✅]
 - Rolling Pin [✅]
 - Frisbee Plate
 - Tawa
 - Flame Thrower
-- Water Gun
+- Water Gun[✅]
 
 Details:
 
 Unreal Engine 5.7.3
-Visual Studio 2026 Insiders
+jet brains rider.
