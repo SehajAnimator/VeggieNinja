@@ -11,7 +11,7 @@
 class PlayerAttributes
 {
 public:
-	float moveSpeed = 10.f;
+	float moveSpeed = 250.f;
 };
 
 UCLASS()

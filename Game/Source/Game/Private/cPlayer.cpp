@@ -3,6 +3,7 @@
 
 #include "cPlayer.h"
 #include "Components/StaticMeshComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Engine/Engine.h"
 
 // Sets default values
@@ -16,9 +17,32 @@ AcPlayer::AcPlayer()
 	
 	// Custom Components
 	playerBase = CreateDefaultSubobject<UStaticMeshComponent>("PlayerBase");
-	
-	//static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset (TEXT("/Engine/BasicShapes/Cube.Cube"));
-	//if (CubeMeshAsset.Succeeded()) playerBase->SetStaticMesh(CubeMeshAsset.Object);
+
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset (TEXT("/Engine/BasicShapes/Cube.Cube"));
+	if (CubeMeshAsset.Succeeded())
+	{
+		playerBase->SetStaticMesh(CubeMeshAsset.Object);
+		if (GEngine != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				3.f,
+				FColor::Green,
+				TEXT("Cube Loaded")
+			);
+		}
+	} else
+	{
+		if (GEngine != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				3.f,
+				FColor::Green,
+				TEXT("Cube Loaded")
+			);
+		}
+	}
 	//playerBase->SetWorldScale3D(FVector(0.25f, 0.25, 2.f));
 	
     playerBase->SetSimulatePhysics(true);
@@ -29,6 +53,7 @@ AcPlayer::AcPlayer()
     playerCamera = CreateDefaultSubobject<UCameraComponent>("DefaultCamera");
 	playerCamera->SetupAttachment(playerBase);
 	playerCamera->bAutoActivate = false;
+	playerCamera->SetRelativeLocation(FVector3d(0.0f, 0.0f, 100.f));
 }
 
 // Called when the game starts or when spawned
@@ -40,7 +65,6 @@ void AcPlayer::BeginPlay()
 	playerController = GetWorld()->GetFirstPlayerController();
 	// Player Camera
 	playerCamera->Activate(true);
-	playerCamera->SetRelativeLocation(FVector3d(0.0f, 0.0f, 150.f));
 }
 
 // Called every frame
@@ -64,13 +88,18 @@ void AcPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // Custom Methods
 void AcPlayer::UpdateCamera()
 {
-	FRotator camRot = playerCamera->GetRelativeRotation();
+	FRotator camRot = playerCamera->GetComponentRotation();
 	camRot.Add(mouseY * this->GetSensitivity(), mouseX * this->GetSensitivity(), 0);
-	playerCamera->SetRelativeRotation(camRot);
-	FRotator camRot2 = camRot;
-	camRot2.Roll = 0;
-	camRot2.Pitch = 0;
-	playerBase->SetRelativeRotation(camRot2);
+	
+	FRotator baseRotYaw = camRot;
+	baseRotYaw.Roll = 0;
+	baseRotYaw.Pitch = 0;
+	playerBase->SetRelativeRotation(baseRotYaw, false, nullptr, ETeleportType::TeleportPhysics);
+	
+	FRotator camRotPitch = camRot;
+	camRotPitch.Roll = 0;
+	camRotPitch.Yaw = 0;
+	playerCamera->SetRelativeRotation(camRotPitch);
 }
 
 void AcPlayer::CheckMovement()
@@ -89,6 +118,9 @@ void AcPlayer::CheckMovement()
 void AcPlayer::UpdateMovement()
 {
 	if (goForward) playerBase->SetPhysicsLinearVelocity(playerBase->GetForwardVector() * this->playerAttributes.moveSpeed);
+	if (goLeft) playerBase->SetPhysicsLinearVelocity(playerBase->GetRightVector() * -this->playerAttributes.moveSpeed);
+	if (goBackward) playerBase->SetPhysicsLinearVelocity(playerBase->GetForwardVector() * -this->playerAttributes.moveSpeed);
+	if (goRight) playerBase->SetPhysicsLinearVelocity(playerBase->GetRightVector() * this->playerAttributes.moveSpeed);
 }
 
 // Setters
