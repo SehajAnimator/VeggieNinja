@@ -22,26 +22,7 @@ AcPlayer::AcPlayer()
 	if (CubeMeshAsset.Succeeded())
 	{
 		playerBase->SetStaticMesh(CubeMeshAsset.Object);
-		if (GEngine != nullptr)
-		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				3.f,
-				FColor::Green,
-				TEXT("Cube Loaded")
-			);
-		}
-	} else
-	{
-		if (GEngine != nullptr)
-		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				3.f,
-				FColor::Green,
-				TEXT("Cube Loaded")
-			);
-		}
+		
 	}
 	//playerBase->SetWorldScale3D(FVector(0.25f, 0.25, 2.f));
 	
@@ -88,8 +69,9 @@ void AcPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // Custom Methods
 void AcPlayer::UpdateCamera()
 {
-	FRotator camRot = playerCamera->GetComponentRotation();
+	FRotator camRot = this->playerRotation;
 	camRot.Add(mouseY * this->GetSensitivity(), mouseX * this->GetSensitivity(), 0);
+	this->playerRotation = camRot;
 	
 	FRotator baseRotYaw = camRot;
 	baseRotYaw.Roll = 0;

@@ -24,6 +24,7 @@ public:
 	AcPlayer();
 
 private:
+	FRotator playerRotation = {};
 	float cameraSensitivity = 3.f;
 	float mouseX = 0, mouseY = 0;
 	PlayerAttributes playerAttributes;
