@@ -30,6 +30,7 @@ AcPlayer::AcPlayer()
     playerBase->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     playerBase->SetCollisionProfileName(TEXT("PhysicsActor"));
     playerBase->SetupAttachment(RootComponent);
+	playerBase->SetVisibility(false);
 
     playerCamera = CreateDefaultSubobject<UCameraComponent>("DefaultCamera");
 	playerCamera->SetupAttachment(playerBase);
@@ -76,6 +77,7 @@ void AcPlayer::UpdateCamera()
 	FRotator baseRotYaw = camRot;
 	baseRotYaw.Roll = 0;
 	baseRotYaw.Pitch = 0;
+	playerBase->SetWorldRotation(FRotator::ZeroRotator, false, nullptr, ETeleportType::TeleportPhysics);
 	playerBase->SetRelativeRotation(baseRotYaw, false, nullptr, ETeleportType::TeleportPhysics);
 	
 	FRotator camRotPitch = camRot;
@@ -92,9 +94,13 @@ void AcPlayer::CheckMovement()
 	goBackward = false;
 	
 	if (playerController->IsInputKeyDown(EKeys::W)) goForward = true;
+	if (playerController->IsInputKeyDown(EKeys::Up)) goForward = true;
 	if (playerController->IsInputKeyDown(EKeys::A)) goLeft = true;
+	if (playerController->IsInputKeyDown(EKeys::Left)) goLeft = true;
 	if (playerController->IsInputKeyDown(EKeys::S)) goBackward = true;
+	if (playerController->IsInputKeyDown(EKeys::Down)) goBackward = true;
 	if (playerController->IsInputKeyDown(EKeys::D)) goRight = true;
+	if (playerController->IsInputKeyDown(EKeys::Right)) goRight = true;
 }
 
 void AcPlayer::UpdateMovement()
