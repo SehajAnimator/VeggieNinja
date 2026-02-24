@@ -9,6 +9,9 @@ WEAPONS:
 
 - Kukri Knife [✅]
 - Tweezers[✅]
+
+	PowerMode: Powering Up 3 Times Creates A Jet Tsunami
+
 - Spoon [✅]
 - Rolling Pin [✅]
 - Frisbee Plate
