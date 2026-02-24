@@ -12,7 +12,7 @@ WEAPONS:
 - Spoon [✅]
 - Rolling Pin [✅]
 - Frisbee Plate
-- Tawa
+- Tawa[✅]
 - Flame Thrower
 - Water Gun[✅]
 
