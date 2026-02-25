@@ -24,11 +24,11 @@ AcPlayer::AcPlayer()
 		playerBase->SetStaticMesh(CubeMeshAsset.Object);
 		
 	}
-	//playerBase->SetWorldScale3D(FVector(0.25f, 0.25, 2.f));
 	
     playerBase->SetSimulatePhysics(true);
     playerBase->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     playerBase->SetCollisionProfileName(TEXT("PhysicsActor"));
+	playerBase->SetEnableGravity(true);
     playerBase->SetupAttachment(RootComponent);
 	playerBase->SetVisibility(false);
 
@@ -77,12 +77,12 @@ void AcPlayer::UpdateCamera()
 	FRotator baseRotYaw = camRot;
 	baseRotYaw.Roll = 0;
 	baseRotYaw.Pitch = 0;
-	playerBase->SetWorldRotation(FRotator::ZeroRotator, false, nullptr, ETeleportType::TeleportPhysics);
 	playerBase->SetRelativeRotation(baseRotYaw, false, nullptr, ETeleportType::TeleportPhysics);
 	
 	FRotator camRotPitch = camRot;
 	camRotPitch.Roll = 0;
 	camRotPitch.Yaw = 0;
+	camRotPitch.Pitch = FMath::Clamp(camRot.Pitch, -90, 90);
 	playerCamera->SetRelativeRotation(camRotPitch);
 }
 
@@ -101,6 +101,7 @@ void AcPlayer::CheckMovement()
 	if (playerController->IsInputKeyDown(EKeys::Down)) goBackward = true;
 	if (playerController->IsInputKeyDown(EKeys::D)) goRight = true;
 	if (playerController->IsInputKeyDown(EKeys::Right)) goRight = true;
+	if (playerController->IsInputKeyDown(EKeys::SpaceBar)) canJump = true;
 }
 
 void AcPlayer::UpdateMovement()
@@ -109,6 +110,11 @@ void AcPlayer::UpdateMovement()
 	if (goLeft) playerBase->SetPhysicsLinearVelocity(playerBase->GetRightVector() * -this->playerAttributes.moveSpeed);
 	if (goBackward) playerBase->SetPhysicsLinearVelocity(playerBase->GetForwardVector() * -this->playerAttributes.moveSpeed);
 	if (goRight) playerBase->SetPhysicsLinearVelocity(playerBase->GetRightVector() * this->playerAttributes.moveSpeed);
+	if (canJump)
+	{
+		canJump = false;
+		playerBase->SetPhysicsLinearVelocity(playerBase->GetUpVector() * this->playerAttributes.jumpForce);
+	}
 }
 
 // Setters
