@@ -17,12 +17,20 @@ AcPlayer::AcPlayer()
 	
 	// Custom Components
 	playerBase = CreateDefaultSubobject<UStaticMeshComponent>("PlayerBase");
+	
+	baseWeapon = CreateDefaultSubobject<UStaticMeshComponent>("Weapon");
 
     static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset (TEXT("/Engine/BasicShapes/Cube.Cube"));
 	if (CubeMeshAsset.Succeeded())
 	{
 		playerBase->SetStaticMesh(CubeMeshAsset.Object);
 		
+	}
+	
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/res/QuestionGun_Baked/StaticMeshes/QuestionGun.QuestionGun"));
+	if (MeshAsset.Succeeded())
+	{
+		baseWeapon->SetStaticMesh(MeshAsset.Object);
 	}
 	
     playerBase->SetSimulatePhysics(true);
@@ -35,7 +43,11 @@ AcPlayer::AcPlayer()
     playerCamera = CreateDefaultSubobject<UCameraComponent>("DefaultCamera");
 	playerCamera->SetupAttachment(playerBase);
 	playerCamera->bAutoActivate = false;
-	playerCamera->SetRelativeLocation(FVector3d(0.0f, 0.0f, 100.f));
+	playerCamera->SetRelativeLocation(FVector3d(0.0f, 0.0f, 300.f));
+	
+	baseWeapon->SetupAttachment(playerCamera);
+	baseWeapon->SetRelativeLocation(FVector3d(150.0f, 100.0f, -75.f));
+	baseWeapon->SetCollisionProfileName("NoCollision");
 }
 
 // Called when the game starts or when spawned

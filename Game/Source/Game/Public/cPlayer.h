@@ -50,6 +50,9 @@ public:
 	UStaticMeshComponent* playerBase;
 	
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Default")
+	UStaticMeshComponent* baseWeapon;
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Default")
 	UCameraComponent* playerCamera;
 	
 	// Custom Methods
