@@ -1,4 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2026 Studios SehajAvastha
+// 
+// This file is part of VeggieNinja.
+// 
+// Licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+// You may not use this file except in compliance with the License.
+// 
+// You are free to share and adapt this work for academic and research purposes only,
+// provided that proper attribution is given and derivatives are licensed under the same terms.
+// Commercial use is strictly prohibited.
+// 
+// Full license text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 
 
 #include "cPlayer.h"
@@ -21,24 +32,30 @@ AcPlayer::AcPlayer()
 	baseWeapon = CreateDefaultSubobject<UStaticMeshComponent>("Weapon");
 
     static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset (TEXT("/Engine/BasicShapes/Cube.Cube"));
-	if (CubeMeshAsset.Succeeded())
-	{
-		playerBase->SetStaticMesh(CubeMeshAsset.Object);
-		
-	}
+	if (CubeMeshAsset.Succeeded()) playerBase->SetStaticMesh(CubeMeshAsset.Object);
 	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/res/QuestionGun_Baked/StaticMeshes/QuestionGun.QuestionGun"));
-	if (MeshAsset.Succeeded())
-	{
-		baseWeapon->SetStaticMesh(MeshAsset.Object);
-	}
+	if (MeshAsset.Succeeded())baseWeapon->SetStaticMesh(MeshAsset.Object);
 	
     playerBase->SetSimulatePhysics(true);
     playerBase->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     playerBase->SetCollisionProfileName(TEXT("PhysicsActor"));
 	playerBase->SetEnableGravity(true);
+	playerBase->SetMassOverrideInKg(NAME_None, 10.f);
+	playerBase->SetLinearDamping(1);
+	playerBase->SetAngularDamping(1);
     playerBase->SetupAttachment(RootComponent);
 	playerBase->SetVisibility(false);
+	
+	bottomCollider = CreateDefaultSubobject<UStaticMeshComponent>("BottomCollider");
+	
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneAsset(TEXT("/Engine/BasicShapes/Plane.Plane"));
+	if (PlaneAsset.Succeeded()) bottomCollider->SetStaticMesh(PlaneAsset.Object);
+	
+	bottomCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	bottomCollider->SetCollisionProfileName(TEXT("NoCollision"));
+	bottomCollider->SetupAttachment(playerBase);
+	bottomCollider->SetRelativeLocation(FVector(0, 0, -56));
 
     playerCamera = CreateDefaultSubobject<UCameraComponent>("DefaultCamera");
 	playerCamera->SetupAttachment(playerBase);
@@ -71,6 +88,30 @@ void AcPlayer::Tick(float DeltaTime)
 	this->UpdateCamera();
 	this->CheckMovement();
 	this->UpdateMovement();
+
+	if (isGrounded(bottomCollider))
+	{
+		if (GEngine != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(
+			-1,
+			0.1f,
+			FColor::Green,
+			TEXT("YES")
+			);
+		}
+	} else
+	{
+		if (GEngine != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(
+			-1,
+			0.1f,
+			FColor::Red,
+			TEXT("NO")
+			);
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -118,14 +159,26 @@ void AcPlayer::CheckMovement()
 
 void AcPlayer::UpdateMovement()
 {
-	if (goForward) playerBase->SetPhysicsLinearVelocity(playerBase->GetForwardVector() * this->playerAttributes.moveSpeed);
-	if (goLeft) playerBase->SetPhysicsLinearVelocity(playerBase->GetRightVector() * -this->playerAttributes.moveSpeed);
-	if (goBackward) playerBase->SetPhysicsLinearVelocity(playerBase->GetForwardVector() * -this->playerAttributes.moveSpeed);
-	if (goRight) playerBase->SetPhysicsLinearVelocity(playerBase->GetRightVector() * this->playerAttributes.moveSpeed);
-	if (canJump)
+	// Clamp Forces Beforehand
+	FVector currVel = playerBase->GetPhysicsLinearVelocity();
+	FVector moveVel = FVector(currVel.X, currVel.Y, 0);
+
+	if (moveVel.Size() > playerAttributes.maxMoveVelocity)
 	{
+		FVector newVel = currVel.GetSafeNormal() * playerAttributes.maxMoveVelocity;
+		FVector cVel = FVector(newVel.X, newVel.Y, currVel.Z);
+		playerBase->SetPhysicsLinearVelocity(cVel);
+	}
+	
+	// Add Forces
+	if (goForward) playerBase->AddForce(playerBase->GetForwardVector() * this->playerAttributes.moveSpeed, NAME_None, true);
+	if (goLeft) playerBase->AddForce(playerBase->GetRightVector() * -this->playerAttributes.moveSpeed, NAME_None, true);
+	if (goBackward) playerBase->AddForce(playerBase->GetForwardVector() * -this->playerAttributes.moveSpeed, NAME_None, true);
+	if (goRight) playerBase->AddForce(playerBase->GetRightVector() * this->playerAttributes.moveSpeed, NAME_None, true);
+	
+	if (canJump) {
 		canJump = false;
-		playerBase->SetPhysicsLinearVelocity(playerBase->GetUpVector() * this->playerAttributes.jumpForce);
+		playerBase->AddImpulse(playerBase->GetUpVector() * this->playerAttributes.jumpForce, NAME_None, true);
 	}
 }
 
@@ -135,8 +188,20 @@ void AcPlayer::SetSensitivity(float value)
 	this->cameraSensitivity = value;
 }
 
+// Getters
 float AcPlayer::GetSensitivity()
 {
 	return this->cameraSensitivity;
 }
 
+bool AcPlayer::isGrounded(USceneComponent* comp)
+{
+	FVector loc = comp->GetComponentLocation();
+	FVector endLoc = loc;
+	endLoc.Z -= 5;
+	
+	TArray<FHitResult> hitResults;
+	GetWorld()->LineTraceMultiByChannel(hitResults ,loc, endLoc, ECC_Visibility);
+	
+	return hitResults.Num() > 0;
+}
