@@ -23,7 +23,7 @@ class PlayerAttributes
 {
 public:
 	float moveSpeed = 3000.f;
-	float jumpForce = 250.f;
+	float jumpForce = 1000.f;
 	float maxMoveVelocity = 4500.f;
 };
 

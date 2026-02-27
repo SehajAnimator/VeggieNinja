@@ -30,9 +30,6 @@ AcPlayer::AcPlayer()
 	playerBase = CreateDefaultSubobject<UStaticMeshComponent>("PlayerBase");
 	
 	baseWeapon = CreateDefaultSubobject<UStaticMeshComponent>("Weapon");
-
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset (TEXT("/Engine/BasicShapes/Cube.Cube"));
-	if (CubeMeshAsset.Succeeded()) playerBase->SetStaticMesh(CubeMeshAsset.Object);
 	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/res/QuestionGun_Baked/StaticMeshes/QuestionGun.QuestionGun"));
 	if (MeshAsset.Succeeded())baseWeapon->SetStaticMesh(MeshAsset.Object);
@@ -45,17 +42,23 @@ AcPlayer::AcPlayer()
 	playerBase->SetLinearDamping(1);
 	playerBase->SetAngularDamping(1);
     playerBase->SetupAttachment(RootComponent);
-	playerBase->SetVisibility(false);
+	playerBase->SetVisibility(true);
 	
 	bottomCollider = CreateDefaultSubobject<UStaticMeshComponent>("BottomCollider");
 	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneAsset(TEXT("/Engine/BasicShapes/Plane.Plane"));
-	if (PlaneAsset.Succeeded()) bottomCollider->SetStaticMesh(PlaneAsset.Object);
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset (TEXT("/Engine/BasicShapes/Cube.Cube"));
+	if (CubeMeshAsset.Succeeded())
+	{
+		playerBase->SetStaticMesh(CubeMeshAsset.Object);
+		bottomCollider->SetStaticMesh(CubeMeshAsset.Object);
+	}
 	
 	bottomCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	bottomCollider->SetCollisionProfileName(TEXT("NoCollision"));
 	bottomCollider->SetupAttachment(playerBase);
-	bottomCollider->SetRelativeLocation(FVector(0, 0, -56));
+	bottomCollider->SetVisibility(true);
+	bottomCollider->SetRelativeLocation(FVector(0, 0, -46));
+	bottomCollider->SetRelativeScale3D(FVector(1, 1, 0.1f));
 
     playerCamera = CreateDefaultSubobject<UCameraComponent>("DefaultCamera");
 	playerCamera->SetupAttachment(playerBase);
@@ -89,29 +92,6 @@ void AcPlayer::Tick(float DeltaTime)
 	this->CheckMovement();
 	this->UpdateMovement();
 
-	if (isGrounded(bottomCollider))
-	{
-		if (GEngine != nullptr)
-		{
-			GEngine->AddOnScreenDebugMessage(
-			-1,
-			0.1f,
-			FColor::Green,
-			TEXT("YES")
-			);
-		}
-	} else
-	{
-		if (GEngine != nullptr)
-		{
-			GEngine->AddOnScreenDebugMessage(
-			-1,
-			0.1f,
-			FColor::Red,
-			TEXT("NO")
-			);
-		}
-	}
 }
 
 // Called to bind functionality to input
@@ -176,7 +156,7 @@ void AcPlayer::UpdateMovement()
 	if (goBackward) playerBase->AddForce(playerBase->GetForwardVector() * -this->playerAttributes.moveSpeed, NAME_None, true);
 	if (goRight) playerBase->AddForce(playerBase->GetRightVector() * this->playerAttributes.moveSpeed, NAME_None, true);
 	
-	if (canJump) {
+	if (canJump && isGrounded(bottomCollider)) {
 		canJump = false;
 		playerBase->AddImpulse(playerBase->GetUpVector() * this->playerAttributes.jumpForce, NAME_None, true);
 	}
