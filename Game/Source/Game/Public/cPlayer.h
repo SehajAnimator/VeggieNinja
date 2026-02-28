@@ -27,6 +27,16 @@ public:
 	float maxMoveVelocity = 4500.f;
 };
 
+class SkillAttributes
+{
+public:
+	int64 baseHealth = 100;
+	int64 baseRegen = 1;
+	int64 baseAttack = 10;
+	int64 baseDefense = 0;
+	int64 baseAgility = 100;
+};
+
 UCLASS()
 class GAME_API AcPlayer : public APawn
 {
