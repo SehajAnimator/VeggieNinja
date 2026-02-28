@@ -26,10 +26,9 @@ WEAPONS:
 
 PROPS:
 
-- bon fire
-- health potions
+- bon fire[✅]
+- health potions [✅]
 - apple, peach
-- 
 
 Details:
 
