@@ -50,7 +50,10 @@ private:
 	FRotator playerRotation = {};
 	float cameraSensitivity = 3.f;
 	float mouseX = 0, mouseY = 0;
-	PlayerAttributes playerAttributes;
+	
+	PlayerAttributes playerAttributes = {};
+	SkillAttributes skillAttributes = {};
+	
 	APlayerController* playerController;
 	
 	bool goForward = false, goBackward = false, goRight = false, goLeft = false;

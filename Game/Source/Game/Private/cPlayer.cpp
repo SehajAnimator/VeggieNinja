@@ -42,7 +42,9 @@ AcPlayer::AcPlayer()
 	playerBase->SetLinearDamping(1);
 	playerBase->SetAngularDamping(1);
     playerBase->SetupAttachment(RootComponent);
-	playerBase->SetVisibility(true);
+	playerBase->SetVisibility(false);
+	playerBase->BodyInstance.bLockXRotation = true;
+	playerBase->BodyInstance.bLockYRotation = true;
 	
 	bottomCollider = CreateDefaultSubobject<UStaticMeshComponent>("BottomCollider");
 	
@@ -56,7 +58,7 @@ AcPlayer::AcPlayer()
 	bottomCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	bottomCollider->SetCollisionProfileName(TEXT("NoCollision"));
 	bottomCollider->SetupAttachment(playerBase);
-	bottomCollider->SetVisibility(true);
+	bottomCollider->SetVisibility(false);
 	bottomCollider->SetRelativeLocation(FVector(0, 0, -46));
 	bottomCollider->SetRelativeScale3D(FVector(1, 1, 0.1f));
 
@@ -134,7 +136,7 @@ void AcPlayer::CheckMovement()
 	if (playerController->IsInputKeyDown(EKeys::Down)) goBackward = true;
 	if (playerController->IsInputKeyDown(EKeys::D)) goRight = true;
 	if (playerController->IsInputKeyDown(EKeys::Right)) goRight = true;
-	if (playerController->IsInputKeyDown(EKeys::SpaceBar)) canJump = true;
+	if (playerController->IsInputKeyDown(EKeys::SpaceBar) && isGrounded(bottomCollider)) canJump = true;
 }
 
 void AcPlayer::UpdateMovement()
@@ -156,7 +158,7 @@ void AcPlayer::UpdateMovement()
 	if (goBackward) playerBase->AddForce(playerBase->GetForwardVector() * -this->playerAttributes.moveSpeed, NAME_None, true);
 	if (goRight) playerBase->AddForce(playerBase->GetRightVector() * this->playerAttributes.moveSpeed, NAME_None, true);
 	
-	if (canJump && isGrounded(bottomCollider)) {
+	if (canJump) {
 		canJump = false;
 		playerBase->AddImpulse(playerBase->GetUpVector() * this->playerAttributes.jumpForce, NAME_None, true);
 	}
