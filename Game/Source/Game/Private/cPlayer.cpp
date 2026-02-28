@@ -171,7 +171,7 @@ void AcPlayer::SetSensitivity(float value)
 }
 
 // Getters
-float AcPlayer::GetSensitivity()
+float AcPlayer::GetSensitivity() const
 {
 	return this->cameraSensitivity;
 }
@@ -186,4 +186,9 @@ bool AcPlayer::isGrounded(USceneComponent* comp)
 	GetWorld()->LineTraceMultiByChannel(hitResults ,loc, endLoc, ECC_Visibility);
 	
 	return hitResults.Num() > 0;
+}
+
+UStaticMeshComponent* AcPlayer::GetBase() const
+{
+	return this->playerBase;
 }

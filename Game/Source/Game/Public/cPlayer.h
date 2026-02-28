@@ -90,6 +90,7 @@ public:
 	// Setters
 	void SetSensitivity(float value);
 	// Getters
-	float GetSensitivity();
+	float GetSensitivity() const;
 	bool isGrounded(USceneComponent* comp);
+	UStaticMeshComponent* GetBase() const;
 };
