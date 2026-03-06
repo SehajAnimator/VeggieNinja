@@ -6,9 +6,9 @@ BOSSES:
 
 MOB: 
 
-- slime(jelly)
+- slime(jelly) [✅]
 - fish
-- bottle gourd(loki)
+- bottle gourd(loki) [✅]
 
 WEAPONS:
 
