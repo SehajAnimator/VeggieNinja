@@ -22,7 +22,7 @@ AKukriKnife::AKukriKnife()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset (TEXT("/Game/res/Weapons/KukriKnife/StaticMeshes/KukriKnife.KukriKnife"));
 	if (MeshAsset.Succeeded()) baseMesh->SetStaticMesh(MeshAsset.Object);
 	
-	baseMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	if (!HasAnyFlags(RF_ClassDefaultObject)) baseMesh->SetCollisionProfileName(TEXT("NoCollision"));
 	baseMesh->SetRelativeScale3D(FVector(0.2, 0.2, 0.2));
 	baseMesh->SetupAttachment(RootComponent);
 

@@ -41,8 +41,12 @@ AcPlayer::AcPlayer()
 	playerBase->SetLinearDamping(1);
 	playerBase->SetAngularDamping(1);
     playerBase->SetupAttachment(RootComponent);
-	playerBase->BodyInstance.bLockXRotation = true;
-	playerBase->BodyInstance.bLockYRotation = true;
+	// Physics Error Instance
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		playerBase->BodyInstance.bLockXRotation = true;
+		playerBase->BodyInstance.bLockYRotation = true;
+	}
 	
 	bottomCollider = CreateDefaultSubobject<USphereComponent>("BottomCollider");
 	bottomCollider->InitSphereRadius(50);	
@@ -60,9 +64,6 @@ AcPlayer::AcPlayer()
 	equippedWeapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("EquippedWeapon"));
 	equippedWeapon->AttachToComponent(playerCamera, FAttachmentTransformRules::KeepRelativeTransform);
 	equippedWeapon->SetChildActorClass(AKukriKnife::StaticClass());
-	
-	AKukriKnife* child = Cast<AKukriKnife>(equippedWeapon->GetChildActor());
-	if (child) child->SetBase(playerBase).SetView(playerCamera);
 }
 
 // Called when the game starts or when spawned
@@ -79,6 +80,7 @@ void AcPlayer::BeginPlay()
 	AKukriKnife* child = Cast<AKukriKnife>(equippedWeapon->GetChildActor());
 	if (child)
 	{
+		child->SetBase(playerBase).SetView(playerCamera);
 		equippedWeapon->SetRelativeLocation(child->viewOffset);
 		equippedWeapon->SetRelativeRotation(child->rotOffset);
 	}
