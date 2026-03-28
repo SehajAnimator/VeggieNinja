@@ -21,18 +21,22 @@ AKukriKnife::AKukriKnife()
 	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset (TEXT("/Game/res/Weapons/KukriKnife/StaticMeshes/KukriKnife.KukriKnife"));
 	if (MeshAsset.Succeeded()) baseMesh->SetStaticMesh(MeshAsset.Object);
-	
-	if (!HasAnyFlags(RF_ClassDefaultObject)) baseMesh->SetCollisionProfileName(TEXT("NoCollision"));
-	baseMesh->SetRelativeScale3D(FVector(0.2, 0.2, 0.2));
-	baseMesh->SetupAttachment(RootComponent);
 
-	viewOffset = FVector(150, 50, -25);
-	rotOffset = FRotator(0, -90, 0);
+	baseMesh->SetupAttachment(RootComponent);
 }
 
 void AKukriKnife::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		baseMesh->SetCollisionProfileName(TEXT("NoCollision"));
+		baseMesh->SetRelativeScale3D(FVector(0.2, 0.2, 0.2));
+	}
+	
+	viewOffset = FVector(150, 50, -25);
+	rotOffset = FRotator(0, -90, 0);
 }
 
 void AKukriKnife::Tick(float DeltaTime)

@@ -32,25 +32,22 @@ AcPlayer::AcPlayer()
 	// Custom Components
 	playerBase = CreateDefaultSubobject<UCapsuleComponent>("PlayerBase");
 	playerBase->InitCapsuleSize(50, 100);
-	
-    playerBase->SetSimulatePhysics(true);
-    playerBase->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-    playerBase->SetCollisionProfileName(TEXT("PhysicsActor"));
+    playerBase->SetupAttachment(RootComponent);
+	// Player Base
+	playerBase->SetSimulatePhysics(true);
+	playerBase->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	playerBase->SetCollisionProfileName(TEXT("PhysicsActor"));
 	playerBase->SetEnableGravity(true);
 	playerBase->SetMassOverrideInKg(NAME_None, 100.f);
 	playerBase->SetLinearDamping(1);
 	playerBase->SetAngularDamping(1);
-    playerBase->SetupAttachment(RootComponent);
-	// Physics Error Instance
-	if (!HasAnyFlags(RF_ClassDefaultObject))
-	{
-		playerBase->BodyInstance.bLockXRotation = true;
-		playerBase->BodyInstance.bLockYRotation = true;
-	}
-	
-	bottomCollider = CreateDefaultSubobject<USphereComponent>("BottomCollider");
-	bottomCollider->InitSphereRadius(50);	
-	bottomCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	playerBase->BodyInstance.bLockXRotation = true;
+	playerBase->BodyInstance.bLockYRotation = true;
+
+    // Bottom Collider
+    bottomCollider = CreateDefaultSubobject<USphereComponent>("BottomCollider");
+    bottomCollider->InitSphereRadius(50);
+    bottomCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	bottomCollider->SetCollisionProfileName(TEXT("OverlapAll"));
 	bottomCollider->SetupAttachment(playerBase);
 	bottomCollider->SetVisibility(true);
@@ -61,6 +58,7 @@ AcPlayer::AcPlayer()
 	playerCamera->bAutoActivate = false;
 	playerCamera->SetRelativeLocation(FVector(0.0f, 0.0f, 300.f));
 	
+	// Equipped Weapon
 	equippedWeapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("EquippedWeapon"));
 	equippedWeapon->AttachToComponent(playerCamera, FAttachmentTransformRules::KeepRelativeTransform);
 	equippedWeapon->SetChildActorClass(AKukriKnife::StaticClass());
@@ -69,7 +67,7 @@ AcPlayer::AcPlayer()
 // Called when the game starts or when spawned
 void AcPlayer::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::BeginPlay();	
 	
 	// Init Code
 	playerController = GetWorld()->GetFirstPlayerController();
