@@ -1,6 +1,9 @@
 # Visual Studio 2015 user specific files
 Game/.vs/
 
+# Exclude Game Output Folder
+Out/
+
 # Compiled Object files
 Game/*.slo
 Game/*.lo
