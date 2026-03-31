@@ -6,6 +6,9 @@ Slice n Dice RPG Action Game
 ## Made In Unreal Engine 5.7.3
 ![Made Using Unreal Engine](https://www.gamespot.com/a/uploads/screen_kubrick/1601/16018044/3833044-unrealengine.jpg)
 
+## Coded & Built With Jetbrain's Rider IDE
+![Built With Jetbrain Rider](https://www.jetbrains.com/lp/rider-unreal/static/preview-75df2e60aecc9c92846fa10e0616fdf3.png)
+
 > [!CAUTION]
 > ONLY USE **_JETBRAINS RIDER_** FOR MANAGING C++ SOURCE FILES UNLESS YOU KNOW WHAT YOU ARE DOING 
 
