@@ -133,6 +133,13 @@ void AcPlayer::CheckMovement()
 	if (playerController->IsInputKeyDown(EKeys::S)) goBackward = true;
 	if (playerController->IsInputKeyDown(EKeys::D)) goRight = true;
 	if (playerController->IsInputKeyDown(EKeys::SpaceBar) && isGrounded()) canJump = true;
+	if (playerController->IsInputKeyDown(EKeys::LeftShift))
+	{
+		isSprinting = true;
+	} else
+	{
+		isSprinting = false;
+	}
 }
 
 void AcPlayer::UpdateMovement()
@@ -154,6 +161,17 @@ void AcPlayer::UpdateMovement()
 	if (goLeft) playerVelocity += (playerBase->GetRightVector() * -this->playerAttributes.moveSpeed);
 	if (goBackward) playerVelocity += (playerBase->GetForwardVector() * -this->playerAttributes.moveSpeed);
 	if (goRight) playerVelocity += (playerBase->GetRightVector() * this->playerAttributes.moveSpeed);
+	
+	if (isSprinting)
+	{
+		playerVelocity.X *= 1.25;
+		playerVelocity.Y *= 1.25;
+		playerAttributes.maxMoveVelocity = 750.f;
+	} else
+	{
+		playerAttributes.maxMoveVelocity = 500.f;
+	}
+	
 	playerBase->SetPhysicsLinearVelocity(playerVelocity);
 	
 	if (canJump) {

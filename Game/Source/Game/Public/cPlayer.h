@@ -60,7 +60,7 @@ private:
 	APlayerController* playerController;
 	
 	bool goForward = false, goBackward = false, goRight = false, goLeft = false;
-	bool canJump = false;
+	bool canJump = false, isSprinting = false;
 	
 protected:
 	// Called when the game starts or when spawned
