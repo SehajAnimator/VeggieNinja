@@ -19,7 +19,7 @@ AKukriKnife::AKukriKnife()
 	
 	baseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset (TEXT("/Game/res/Weapons/KukriKnife/StaticMeshes/KukriKnife.KukriKnife"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset (TEXT("/Game/res/Weapons/old/KukriKnife/StaticMeshes/KukriKnife.KukriKnife"));
 	if (MeshAsset.Succeeded()) baseMesh->SetStaticMesh(MeshAsset.Object);
 
 	baseMesh->SetupAttachment(RootComponent);
