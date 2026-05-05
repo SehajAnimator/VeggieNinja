@@ -57,11 +57,6 @@ AcPlayer::AcPlayer()
 	playerCamera->SetupAttachment(playerBase);
 	playerCamera->bAutoActivate = false;
 	playerCamera->SetRelativeLocation(FVector(0.0f, 0.0f, 300.f));
-	
-	// Equipped Weapon
-	equippedWeapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("EquippedWeapon"));
-	equippedWeapon->AttachToComponent(playerCamera, FAttachmentTransformRules::KeepRelativeTransform);
-	equippedWeapon->SetChildActorClass(AKukriKnife::StaticClass());
 }
 
 // Called when the game starts or when spawned
@@ -74,6 +69,11 @@ void AcPlayer::BeginPlay()
 	playerController->Possess(this);
 	// Player Camera
 	playerCamera->Activate(true);
+	
+	// Equipped Weapon
+	equippedWeapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("EquippedWeapon"));
+	equippedWeapon->AttachToComponent(playerCamera, FAttachmentTransformRules::KeepRelativeTransform);
+	equippedWeapon->SetChildActorClass(AKukriKnife::StaticClass());
 	
 	AKukriKnife* child = Cast<AKukriKnife>(equippedWeapon->GetChildActor());
 	if (child)
