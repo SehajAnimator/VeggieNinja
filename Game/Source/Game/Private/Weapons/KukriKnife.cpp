@@ -16,13 +16,15 @@
 AKukriKnife::AKukriKnife()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
 	baseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset (TEXT("/Game/res/Weapons/old/KukriKnife/StaticMeshes/KukriKnife.KukriKnife"));
-	if (MeshAsset.Succeeded()) baseMesh->SetStaticMesh(MeshAsset.Object);
-
 	baseMesh->SetupAttachment(RootComponent);
+
+
+	if(!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/res/Weapons/old/KukriKnife/StaticMeshes/KukriKnife.KukriKnife"));
+		if (MeshAsset.Succeeded()) baseMesh->SetStaticMesh(MeshAsset.Object);
+	}
 }
 
 void AKukriKnife::BeginPlay()
